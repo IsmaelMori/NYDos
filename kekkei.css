@@ -1,0 +1,584 @@
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&display=swap");
+
+/* =====================================================================
+   KEKKEI.CSS  ·  REWORK  ·  "El choque"
+   ---------------------------------------------------------------------
+   Idea: cada tarjeta es un escenario. Las naturalezas entran en espiral,
+   chocan, nace el emblema del kekkei genkai (se queda en la esquina) y
+   una onda expansiva REVELA al portador como fondo. El retrato no es un
+   rectángulo pegado: se tiñe con el color del kekkei, se mezcla con el
+   fondo y se disuelve en la tarjeta con máscaras.
+
+   Solo CSS: el HTML y el JS no cambian.
+   Imágenes: carpeta  img/kg/  (deidara, darui, gaara, hashirama, haku,
+   kimimaro, mei, guren .jpg). Para cambiar una, busca su color en la
+   sección "RETRATOS" al final del archivo.
+===================================================================== */
+
+:root {
+    --kg-ink: #0b0f18;                       /* fondo de tarjetas y ventanas */
+    --kg-serif: "Shippori Mincho B1", "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+    --kg-ease: cubic-bezier(.2, .8, .2, 1);
+    --kg-spring: cubic-bezier(.3, 1.6, .5, 1);
+}
+
+/* Propiedad animable: radio de la onda que revela el retrato */
+@property --rev { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+
+/* =====================================================================
+   PORTADA
+===================================================================== */
+.nx-banner { position: relative; isolation: isolate; overflow: hidden; padding: 76px 0 44px; }
+
+/* Las cinco naturalezas girando muy despacio detrás del título */
+.nx-banner::after {
+    content: ""; position: absolute; z-index: -2; left: 50%; top: 44%;
+    width: min(820px, 120vw); aspect-ratio: 1; translate: -50% -50%; pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 8%,  rgba(255, 77, 61, .55), transparent 26%),
+        radial-gradient(circle at 90% 38%, rgba(255, 210, 63, .42), transparent 26%),
+        radial-gradient(circle at 75% 88%, rgba(79, 227, 176, .40), transparent 26%),
+        radial-gradient(circle at 25% 88%, rgba(79, 157, 255, .46), transparent 26%),
+        radial-gradient(circle at 10% 38%, rgba(217, 138, 74, .46), transparent 26%);
+    opacity: .5; animation: aura 70s linear infinite;
+}
+@keyframes aura { to { rotate: 360deg; } }
+
+/* Kanji fantasma */
+.nx-banner::before {
+    content: "血継限界"; position: absolute; z-index: -1; left: 50%; top: 46%; translate: -50% -50%;
+    white-space: nowrap; pointer-events: none;
+    font: 800 clamp(70px, 21vw, 250px) / 1 var(--kg-serif); letter-spacing: .06em;
+    color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .075);
+    animation: ghost 2.6s var(--kg-ease) both;
+}
+@keyframes ghost { from { opacity: 0; letter-spacing: .24em; } }
+
+.nx-banner h1 {
+    font: 800 clamp(40px, 8vw, 92px) / 1 var(--kg-serif); letter-spacing: .035em; margin-bottom: 20px;
+    animation: focusIn 1.5s var(--kg-ease) both;
+}
+@keyframes focusIn { from { opacity: 0; filter: blur(18px); letter-spacing: .2em; } }
+.nx-banner h1 span {
+    background: linear-gradient(100deg, #ff263f 25%, #ff9a6b 50%, #ff263f 75%) 0 0 / 230% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: sheen 3.4s ease-in-out .9s 1 both;
+}
+@keyframes sheen { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.nx-banner p { animation: rise 1s var(--kg-ease) .5s both; }
+.nx-back { animation: rise .8s var(--kg-ease) both; }
+@keyframes rise { from { opacity: 0; translate: 0 16px; } }
+
+/* ---------- Filtros ---------- */
+.kg-filters {
+    display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: center;
+    width: fit-content; max-width: 100%; margin: 34px auto 0; padding: 6px; border-radius: 32px;
+    background: rgba(255, 255, 255, .035); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .09);
+    animation: rise 1s var(--kg-ease) .7s both;
+}
+.kg-chip {
+    position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
+    border: 0; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #aab3c4; background: transparent;
+    transition: color .25s, background .25s, box-shadow .3s, transform .4s var(--kg-spring);
+}
+.kg-chip:hover { color: #fff; background: rgba(255, 255, 255, .07); }
+.kg-chip:active { transform: scale(.93); }
+.kg-chip[aria-pressed="true"] {
+    color: #fff; background: color-mix(in srgb, var(--c, #ff263f) 24%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c, #ff263f) 75%, transparent),
+                0 0 24px -6px color-mix(in srgb, var(--c, #ff263f) 70%, transparent);
+}
+.kg-chip .k { font: 700 15px / 1 var(--kg-serif); color: var(--c, #fff); transition: transform .45s var(--kg-spring); }
+.kg-chip[aria-pressed="true"] .k { transform: scale(1.2); }
+.kg-filter-sep { align-self: stretch; width: 1px; margin: 6px 4px; background: rgba(255, 255, 255, .12); }
+
+/* =====================================================================
+   TÍTULOS DE SECCIÓN
+===================================================================== */
+.nx-section { margin-top: 70px; }
+.nx-section > h2 {
+    display: flex; align-items: center; gap: 18px; margin-bottom: 8px;
+    font: 800 clamp(24px, 3.4vw, 32px) / 1.1 var(--kg-serif); letter-spacing: .01em;
+}
+.nx-section > h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255, 255, 255, .2), transparent); }
+.nx-section > .nx-lead { margin-bottom: 28px; }
+
+/* =====================================================================
+   GUÍA DE ADN  (esto sí es una secuencia: los números tienen sentido)
+===================================================================== */
+.adn-box.lg {
+    padding: 0; border-radius: 0; background: none; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    border: 0; border-block: 1px solid rgba(255, 255, 255, .09);
+}
+.adn-box.lg::before { display: none; }
+.adn-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; }
+.adn-step {
+    position: relative; padding: 34px 30px 32px; border: 0; border-radius: 0; background: none; overflow: hidden;
+    transition: background .5s;
+}
+.adn-step + .adn-step { border-left: 1px solid rgba(255, 255, 255, .08); }
+.adn-step:hover { background: linear-gradient(180deg, rgba(255, 38, 63, .07), transparent 70%); }
+.adn-step .n {
+    position: absolute; top: 10px; right: 20px; display: block; width: auto; height: auto; margin: 0; border-radius: 0; background: none;
+    font: 800 78px / 1 var(--kg-serif); color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .15);
+    transition: -webkit-text-stroke-color .5s, translate .6s var(--kg-ease);
+}
+.adn-step:hover .n { -webkit-text-stroke-color: rgba(255, 99, 117, .7); translate: 0 6px; }
+.adn-icon { margin-bottom: 18px; font-size: 24px; color: #ff6375; }
+.adn-icon i { display: inline-block; transition: transform .6s var(--kg-spring); }
+.adn-step:hover .adn-icon i { transform: translateY(-4px) rotate(-10deg) scale(1.15); }
+.adn-step h3 { margin-bottom: 8px; font: 800 18px / 1.2 var(--kg-serif); }
+.adn-step p { max-width: 30ch; font-size: 13px; line-height: 1.7; color: #aeb7c8; }
+.adn-keys { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 16px; font-size: 12px; color: #aeb7c8; }
+
+/* =====================================================================
+   TARJETAS
+===================================================================== */
+.kg-group[hidden], .kg-card[hidden] { display: none; }
+.kg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 22px; }
+.kg-grid.wide { grid-template-columns: 1fr; }
+
+.kg-card {
+    --kg: #fff; --hero: 292px;
+    position: relative; isolation: isolate; display: flex; flex-direction: column;
+    padding: 0; overflow: hidden; text-align: left; color: inherit; border: 0; border-radius: 28px;
+    background: var(--kg-ink);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .07), 0 26px 40px -26px rgba(0, 0, 0, .9);
+    transition: transform .55s var(--kg-ease), box-shadow .55s var(--kg-ease);
+}
+.kg-card:hover, .kg-card:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--kg) 60%, transparent),
+                0 34px 60px -26px color-mix(in srgb, var(--kg) 55%, transparent);
+}
+.kg-card:focus-visible { outline: 2px solid #ff6375; outline-offset: 4px; }
+
+.kg-body {
+    position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column;
+    margin-top: calc(var(--hero) - 46px); padding: 0 24px 24px; text-shadow: 0 2px 16px rgba(0, 0, 0, .75);
+}
+.kg-name { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.kg-name h3 { font: 800 26px / 1.1 var(--kg-serif); letter-spacing: .01em; }
+.kg-name small { font-size: 12px; font-weight: 700; color: var(--kg); }
+.kg-badge {
+    align-self: flex-start; display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; padding: 4px 11px 4px 9px;
+    border-radius: 999px; font-size: 10.5px; font-weight: 700; color: var(--kg);
+    background: color-mix(in srgb, var(--kg) 13%, transparent); text-shadow: none;
+}
+.kg-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--kg); box-shadow: 0 0 10px var(--kg); }
+
+.kg-formula { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 16px 0 12px; font-size: 11.5px; color: #aeb7c8; text-shadow: none; }
+.kg-formula[hidden] { display: none; }
+.kg-formula .op { color: #6f7a90; font-weight: 700; }
+.el-pill {
+    display: inline-flex; align-items: center; gap: 7px; padding: 3px 11px 3px 3px; border-radius: 999px;
+    font-weight: 600; color: #e9edf6; background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1);
+}
+.el-pill i {
+    display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+    font: 700 12px / 1 var(--kg-serif); color: #10131c; background: var(--ec);
+}
+.kg-desc { font-size: 12.8px; line-height: 1.75; color: #b6bfd0; text-shadow: none; }
+.kg-more {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 18px;
+    font-size: 12.5px; font-weight: 700; color: var(--kg); text-shadow: none;
+}
+.kg-more i { transition: transform .4s var(--kg-ease); }
+.kg-card:hover .kg-more i { transform: translateX(6px); }
+
+/* Tarjeta ancha (hereditario) */
+.kg-card.hereditary { flex-direction: row; min-height: 380px; --hero: 0px; }
+.kg-card.hereditary .kg-body { flex: 0 1 58%; margin: 0; padding: 104px 34px 32px; }
+.kg-bullets { margin: 16px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; text-shadow: none; }
+.kg-bullets li { padding: 9px 13px; border-radius: 14px; font-size: 12.5px; color: #d3d9e6; background: rgba(255, 255, 255, .055); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.kg-bullets li::before { content: "骨"; margin-right: 9px; font: 700 11px var(--kg-serif); color: var(--kg); }
+
+/* Las tarjetas se despliegan al llegar a pantalla (solo donde el navegador lo permite) */
+@supports (animation-timeline: view()) {
+    .kg-card { animation: cardIn linear both; animation-timeline: view(); animation-range: entry 0% entry 42%; }
+    @keyframes cardIn { from { opacity: 0; translate: 0 34px; scale: .965; } }
+}
+
+/* =====================================================================
+   ESCENARIO  ·  fusión → emblema → retrato
+===================================================================== */
+.stage {
+    --dur: 7s;
+    --cy: 128px;                      /* altura del choque */
+    --pad: 18px; --es: 56px;          /* margen y tamaño del emblema final */
+    --r0: min(34cqw, 190px);          /* de dónde parten las naturalezas */
+    --dx: calc(var(--pad) + var(--es) / 2 - 50cqw);
+    --dy: calc(var(--pad) + var(--es) / 2 - var(--cy));
+    --fade: linear-gradient(#000, #000);
+    --base-mix: 15%;
+    position: absolute; top: 0; left: 0; right: 0; height: var(--hero);
+    container-type: inline-size; isolation: isolate; overflow: hidden; pointer-events: none;
+    background-color: color-mix(in srgb, var(--kg) var(--base-mix), var(--kg-ink));
+    -webkit-mask-image: linear-gradient(#000 0, #000 50%, transparent 100%);
+            mask-image: linear-gradient(#000 0, #000 50%, transparent 100%);
+    transition: transform 1.2s var(--kg-ease);
+    transform-origin: 50% 20%;
+}
+.kg-card:hover .stage { transform: scale(1.04); }
+.stage > * { z-index: 2; }
+
+/* --- Retrato (o kanji gigante si el kekkei aún no tiene portador) --- */
+.stage::before {
+    content: ""; position: absolute; z-index: 0; inset: 0; display: grid; place-items: center end;
+    background: var(--img, none) var(--pos, 50% 40%) / cover no-repeat;
+    mix-blend-mode: var(--blend, normal);
+    font: 800 min(66cqw, 260px) / 1 var(--kg-serif); padding-right: 6%;
+    color: color-mix(in srgb, var(--kg) 26%, transparent);
+    scale: calc(var(--flip, 1) * 1.2) 1.2; opacity: 0;
+    -webkit-mask-image: radial-gradient(circle farthest-corner at var(--rx, 50%) var(--cy), #000 calc(var(--rev) - 34%), transparent var(--rev)), var(--fade);
+    -webkit-mask-composite: source-in;
+            mask-image: radial-gradient(circle farthest-corner at var(--rx, 50%) var(--cy), #000 calc(var(--rev) - 34%), transparent var(--rev)), var(--fade);
+            mask-composite: intersect;
+    transition: filter .8s;
+    animation: reveal var(--dur) linear 1 forwards;
+}
+.kg-card:hover .stage::before { filter: brightness(1.12) saturate(1.15); }
+
+/* Velo de color del kekkei: une el retrato con la paleta de la página */
+.stage::after {
+    content: ""; position: absolute; z-index: 1; inset: 0; background: var(--kg);
+    mix-blend-mode: color; opacity: 0; animation: tint var(--dur) linear 1 forwards;
+}
+
+@keyframes reveal {
+    0%, 45%  { opacity: 0; --rev: 0%;   scale: calc(var(--flip, 1) * 1.22) 1.22; animation-timing-function: cubic-bezier(.12, .7, .2, 1); }
+    49%      { opacity: 1; }
+    74%      { opacity: 1; --rev: 160%; scale: calc(var(--flip, 1) * 1.1) 1.1; animation-timing-function: ease-out; }
+    100%     { opacity: 1; --rev: 160%; scale: var(--flip, 1) 1; }
+}
+@keyframes tint { 0%, 52% { opacity: 0; } 82%, 100% { opacity: var(--tint, .26); } }
+
+/* --- Naturalezas, onda, chispas --- */
+.stage .orb, .stage .result, .stage .ring, .stage .flash, .stage .spark { position: absolute; left: 50%; top: var(--cy); pointer-events: none; }
+
+.stage .orb {
+    --ang: 180deg;
+    width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%;
+    font: 800 22px / 1 var(--kg-serif); color: #11141d;
+    background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, .9), var(--ec) 56%);
+    box-shadow: 0 0 22px var(--ec), 0 0 60px -6px var(--ec);
+    opacity: 0; animation: fuse var(--dur) linear 1 forwards;
+}
+.stage .orb.a { --ang: 180deg; }
+.stage .orb.b { --ang: 0deg; }
+.stage .orb.c { --ang: -90deg; }
+.stage.three .orb.a { --ang: 150deg; }
+.stage.three .orb.b { --ang: 30deg; }
+.stage.three .orb.c { --ang: 270deg; }
+
+@keyframes fuse {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--ang)) translateX(calc(var(--r0) * 1.3)) rotate(calc(var(--ang) * -1)) scale(.3);
+    }
+    8% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--ang)) translateX(var(--r0)) rotate(calc(var(--ang) * -1)) scale(1);
+        animation-timing-function: cubic-bezier(.5, 0, .9, .55);
+    }
+    44% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(calc(var(--ang) + 320deg)) translateX(calc(var(--r0) * .06)) rotate(calc((var(--ang) + 320deg) * -1)) scale(1.1);
+    }
+    47%, 100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(calc(var(--ang) + 330deg)) translateX(0) rotate(calc((var(--ang) + 330deg) * -1)) scale(.1);
+    }
+}
+
+.stage .flash {
+    width: 130px; height: 130px; margin: -65px 0 0 -65px; border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, var(--kg) 38%, transparent 70%);
+    opacity: 0; animation: flash var(--dur) ease-out 1 forwards;
+}
+@keyframes flash { 0%, 44% { opacity: 0; transform: scale(.15); } 47% { opacity: 1; transform: scale(1.4); } 64%, 100% { opacity: 0; transform: scale(2.8); } }
+
+.stage .ring {
+    width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%;
+    border: 2px solid var(--kg); box-shadow: 0 0 24px var(--kg), inset 0 0 24px var(--kg);
+    opacity: 0; animation: ring var(--dur) ease-out 1 forwards;
+}
+.stage .ring.r2 { animation-delay: .25s; border-color: rgba(255, 255, 255, .8); box-shadow: none; }
+@keyframes ring { 0%, 45% { opacity: 0; transform: scale(.2); } 48% { opacity: .95; } 78%, 100% { opacity: 0; transform: scale(5); } }
+
+.stage .spark {
+    width: 40px; height: 2px; margin: -1px 0 0; border-radius: 2px; transform-origin: 0 50%;
+    background: linear-gradient(90deg, #fff, var(--kg) 45%, transparent);
+    opacity: 0; animation: spark var(--dur) ease-out 1 forwards;
+}
+@keyframes spark {
+    0%, 45%   { opacity: 0; transform: rotate(var(--r)) translateX(8px) scaleX(.2); }
+    48%       { opacity: 1; }
+    74%, 100% { opacity: 0; transform: rotate(var(--r)) translateX(calc(var(--len, 62px) * 1.8)) scaleX(1.3); }
+}
+
+/* --- Emblema: nace en el centro y se queda en la esquina --- */
+.stage .result {
+    width: var(--es); height: var(--es); display: grid; place-items: center; border-radius: 18px;
+    font: 800 calc(var(--es) * .56) / 1 var(--kg-serif); color: color-mix(in srgb, var(--kg) 70%, #fff);
+    background: radial-gradient(circle at 30% 18%, color-mix(in srgb, var(--kg) 38%, var(--kg-ink)), var(--kg-ink) 78%);
+    border: 1.5px solid var(--kg);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--kg) 18%, transparent), 0 10px 34px color-mix(in srgb, var(--kg) 60%, transparent);
+    text-shadow: 0 0 14px var(--kg);
+    opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-24deg);
+    animation: born var(--dur) linear 1 forwards;
+}
+@keyframes born {
+    0%, 45% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-24deg); animation-timing-function: cubic-bezier(.2, .9, .3, 1.3); }
+    52%     { opacity: 1; transform: translate(-50%, -50%) scale(1.75) rotate(4deg); animation-timing-function: ease-out; }
+    58%, 62% { opacity: 1; transform: translate(-50%, -50%) scale(1.45) rotate(0deg); animation-timing-function: cubic-bezier(.6, 0, .2, 1); }
+    80%, 100% { opacity: 1; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(0deg); }
+}
+
+/* Texto de la fórmula mientras llegan las naturalezas ("Agua + Tierra") */
+.stage .tag {
+    position: absolute; left: 0; right: 0; top: calc(var(--cy) + 58px); text-align: center;
+    font: 700 11.5px var(--kg-serif); letter-spacing: .12em; color: #eef1f8; opacity: 0;
+    animation: tag var(--dur) ease 1 forwards;
+}
+.stage .tag.res { display: none; }      /* el nombre ya aparece debajo, en el título */
+@keyframes tag { 0%, 5% { opacity: 0; } 13%, 38% { opacity: .9; } 46%, 100% { opacity: 0; } }
+
+/* Fuera de pantalla todo queda en pausa (lo activa el script) */
+.stage:not(.on), .stage:not(.on)::before, .stage:not(.on)::after, .stage:not(.on) * { animation-play-state: paused !important; }
+
+/* ---------- Huesos (Shikotsumyaku): no hay fusión, el retrato entra solo ---------- */
+.stage.bones { --dur: 6s; --base-mix: 6%; }
+.stage.bones::before { animation-name: revealBones; }
+@keyframes revealBones {
+    0%, 8% { opacity: 0; --rev: 0%;   scale: calc(var(--flip, 1) * 1.2) 1.2; animation-timing-function: cubic-bezier(.12, .7, .2, 1); }
+    14%    { opacity: 1; }
+    55%    { opacity: 1; --rev: 160%; scale: calc(var(--flip, 1) * 1.08) 1.08; animation-timing-function: ease-out; }
+    100%   { opacity: 1; --rev: 160%; scale: var(--flip, 1) 1; }
+}
+.stage.bones::after { animation-name: tintBones; }
+@keyframes tintBones { 0%, 12% { opacity: 0; } 50%, 100% { opacity: var(--tint, .26); } }
+
+.stage.bones .result { animation-name: bornCorner; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); }
+@keyframes bornCorner {
+    0%, 3% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2) rotate(-30deg); animation-timing-function: cubic-bezier(.2, .9, .3, 1.4); }
+    18%, 100% { opacity: 1; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(0deg); }
+}
+.stage.bones .bone {
+    --hs: 1;
+    position: absolute; bottom: -4px; left: calc(var(--bx, 50%) + var(--x)); width: 13px; height: calc(var(--h) * var(--hs));
+    margin-left: -6px; transform-origin: bottom center; transform: rotate(var(--a)) scaleY(0);
+    background: linear-gradient(90deg, #cfc9bb, #fffdf4 45%, #cfc9bb); clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    opacity: .9; animation: grow 5s cubic-bezier(.2, .9, .3, 1.15) infinite; animation-delay: calc(var(--d) + .6s);
+}
+@keyframes grow { 0%, 8% { transform: rotate(var(--a)) scaleY(0); } 24%, 70% { transform: rotate(var(--a)) scaleY(1); } 90%, 100% { transform: rotate(var(--a)) scaleY(0); } }
+
+/* Tarjeta ancha: el escenario ocupa toda la tarjeta y el retrato queda a la derecha */
+.kg-card.hereditary .stage {
+    --cy: 190px; --pad: 30px; --es: 60px; --bx: 76%; --rx: 70%;
+    inset: 0; height: auto; -webkit-mask-image: none; mask-image: none;
+}
+.kg-card.hereditary .stage::before { inset: 0 0 0 36%; --fade: linear-gradient(90deg, transparent 0, #000 44%); }
+.kg-card.hereditary .stage .bone { --hs: 1.7; }
+
+/* =====================================================================
+   RETRATOS  ·  uno por kekkei genkai (se enlazan por su color)
+   --img    imagen          --pos   encuadre         --flip  -1 = espejo
+   --blend  multiply = las partes claras toman el color del kekkei
+   --tint   fuerza del velo de color (0 = sin velo)
+   Si no hay --img se muestra el kanji gigante.
+===================================================================== */
+.stage[style*="#ffb347"] { --img: url("img/deidara.jpg");   --pos: 50% 75%; --blend: multiply; --base-mix: 74%; --tint: .14; }   /* Bakuton · Deidara */
+.stage[style*="#8ad4ff"] { --img: url("img/haku.jpg");      --pos: 50% 28%; --blend: multiply; --base-mix: 64%; --tint: .14; }   /* Hyōton · Haku */
+.stage[style*="#b79cff"] { --img: url("img/darui.jpg");     --pos: 72% 50%; --blend: multiply; --base-mix: 64%; --tint: .14; }   /* Ranton · Darui */
+.stage[style*="#e7b66d"] { --img: url("img/gaara.jpg");     --pos: 50% 36%; --tint: .22; }                                       /* Jiton · Gaara */
+.stage[style*="#5fcf7a"] { --img: url("img/hashirama.jpg"); --pos: 90% 50%; --tint: .30; }                                       /* Mokuton · Hashirama */
+.stage[style*="#8ff0e0"] { --img: url("img/guren.jpg");     --pos: 50% 45%; --tint: .55; }                                       /* Shōton · Guren */
+.stage[style*="#ff7a38"] { --img: url("img/mei.jpg");       --pos: 62% 40%; --tint: .34; }                                       /* Yōton · Mei Terumi */
+.stage[style*="#bfe3ff"] { --img: url("img/mei.jpg");       --pos: 62% 40%; --flip: -1; --tint: .42; }                           /* Futton · Mei Terumi (espejo) */
+.stage[style*="#f1ece0"] { --img: url("img/kimimaro_Kaguya.jpeg"); --pos: 50% 24%; --tint: .35; }                              /* Shikotsumyaku · Kimimaro */
+
+/* Nuevos retratos */
+.stage[style*="#9fb0c4"] { --img: url("img/Hiruko.jpeg");  --pos: 50% 30%; --tint: .50; }                                       /* Kōton · Hiruko */
+.stage[style*="#9b4dff"] { --img: url("img/Hiruko.jpeg");  --pos: 50% 30%; --flip: -1; --tint: .62; }                           /* Meiton · Hiruko (espejo) */
+.stage[style*="#ff5240"] { --img: url("img/pakura.jpeg");  --pos: 50% 30%; --tint: .18; }                                       /* Shakuton · Pakura */
+.stage[style*="#d6c7ff"] { --img: url("img/mu.jpeg");      --pos: 40% 50%; --blend: multiply; --base-mix: 64%; --tint: .14; }   /* Jinton · Mū (manga: multiply) */
+
+/* Si algún kekkei genkai se queda sin imagen, añade aquí su kanji gigante:
+   .stage[style*="#COLOR"]::before { content: "鋼"; }  y  .stage[style*="#COLOR"]::after { display: none; } */
+
+/* =====================================================================
+   VENTANAS
+   (position / inset / margin forzados: el reset global quita el margin:auto)
+===================================================================== */
+.kg-dialog, .vid-dialog {
+    --kg: #fff;
+    position: fixed; inset: 0; margin: auto; padding: 0; color: #f4f5fa; background: var(--kg-ink);
+    border: 0; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+.kg-dialog::backdrop, .vid-dialog::backdrop { background: radial-gradient(70% 70% at 50% 40%, rgba(12, 16, 28, .72), rgba(2, 3, 8, .93)); }
+.kg-dialog[open], .vid-dialog[open] { animation: dlgIn .55s var(--kg-ease); }
+.kg-dialog[open]::backdrop, .vid-dialog[open]::backdrop { animation: fadeIn .4s ease-out; }
+@keyframes dlgIn { from { opacity: 0; transform: translateY(28px) scale(.95); } }
+@keyframes fadeIn { from { opacity: 0; } }
+body:has(dialog[open]) { overflow: hidden; }
+
+/* ---------- Detalle ---------- */
+.kg-dialog {
+    width: min(900px, calc(100vw - 24px)); height: fit-content; max-height: calc(100vh - 28px); max-height: calc(100dvh - 28px);
+    overflow: auto; border-radius: 30px;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--kg) 40%, transparent), 0 40px 100px -10px rgba(0, 0, 0, .85),
+                0 0 120px -30px color-mix(in srgb, var(--kg) 45%, transparent);
+}
+.kg-dialog .stage {
+    --hero: 320px; --cy: 160px; --pad: 28px; --es: 66px; --dur: 5.2s; --r0: min(30cqw, 200px);
+    position: relative; inset: auto; height: var(--hero); transition: none; transform: none;
+}
+.kg-dialog .stage::before { inset: 0 0 0 28%; --fade: linear-gradient(90deg, transparent 0, #000 40%); }
+.kg-dialog .stage.bones { --bx: 76%; --rx: 70%; }
+.kg-dialog .stage.bones .bone { --hs: 1.5; }
+
+.kg-dialog-body { position: relative; z-index: 3; margin-top: -76px; padding: 0 36px 36px; }
+.kg-dialog-body h2 { font: 800 clamp(30px, 5vw, 42px) / 1.05 var(--kg-serif); text-shadow: 0 3px 24px rgba(0, 0, 0, .8); }
+.kg-dialog-body h2 small { display: block; margin: 8px 0 0; font: 700 13px / 1 "Segoe UI", Arial, sans-serif; letter-spacing: .02em; color: var(--kg); }
+.kg-dialog-body .kg-formula { margin: 18px 0 12px; }
+.kg-dialog-body .kg-desc { max-width: 62ch; font-size: 14px; line-height: 1.8; color: #c0c8d8; }
+
+.kg-dialog[open] .kg-dialog-body > * { animation: rise .8s var(--kg-ease) both; }
+.kg-dialog[open] .kg-dialog-body > :nth-child(1) { animation-delay: .15s; }
+.kg-dialog[open] .kg-dialog-body > :nth-child(2) { animation-delay: .25s; }
+.kg-dialog[open] .kg-dialog-body > :nth-child(3) { animation-delay: .35s; }
+.kg-dialog[open] .kg-dialog-body > :nth-child(4) { animation-delay: .45s; }
+.kg-dialog[open] .kg-dialog-body > :nth-child(5) { animation-delay: .55s; }
+
+.kg-close {
+    position: absolute; top: 16px; right: 16px; z-index: 6; display: grid; place-items: center; width: 40px; height: 40px;
+    border: 0; border-radius: 50%; color: #fff; cursor: pointer; background: rgba(10, 13, 22, .7);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22);
+    transition: background .25s, transform .5s var(--kg-spring);
+}
+.kg-close:hover { background: rgba(255, 38, 63, .8); transform: rotate(90deg); }
+
+.kg-aviso {
+    display: flex; gap: 12px; margin: 18px 0 0; padding: 14px 16px; border-radius: 16px;
+    font-size: 12.8px; line-height: 1.65; color: #f6e3b8; background: rgba(231, 182, 109, .1); box-shadow: inset 0 0 0 1px rgba(231, 182, 109, .3);
+}
+.kg-aviso i { margin-top: 2px; }
+
+/* Técnicas */
+.kg-techs { display: grid; gap: 10px; margin-top: 30px; }
+.kg-techs h3 { margin-bottom: 4px; font: 800 18px var(--kg-serif); }
+.kg-tech {
+    display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 18px 16px 20px;
+    border-radius: 6px 18px 18px 6px; border-left: 3px solid color-mix(in srgb, var(--kg) 70%, transparent);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--kg) 9%, transparent), rgba(255, 255, 255, .025));
+    transition: background .35s, translate .45s var(--kg-ease);
+}
+.kg-tech:hover { translate: 4px 0; background: linear-gradient(90deg, color-mix(in srgb, var(--kg) 17%, transparent), rgba(255, 255, 255, .04)); }
+.kg-tech > div { min-width: 0; }
+.kg-tech h4 { margin-bottom: 2px; font: 800 16px / 1.25 var(--kg-serif); }
+.kg-tech .jp { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--kg); }
+.kg-tech p { max-width: 58ch; font-size: 12.8px; line-height: 1.7; color: #b6bfd0; }
+.kg-empty { padding: 22px; text-align: center; font-size: 13px; color: #a5adbd; border-radius: 18px; border: 1px dashed rgba(255, 255, 255, .18); }
+
+.kg-dialog[open] .kg-tech { animation: rise .7s var(--kg-ease) both; }
+.kg-dialog[open] .kg-tech:nth-child(2) { animation-delay: .7s; }
+.kg-dialog[open] .kg-tech:nth-child(3) { animation-delay: .78s; }
+.kg-dialog[open] .kg-tech:nth-child(4) { animation-delay: .86s; }
+.kg-dialog[open] .kg-tech:nth-child(5) { animation-delay: .94s; }
+.kg-dialog[open] .kg-tech:nth-child(n+6) { animation-delay: 1s; }
+
+.vid-btn {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 9px; min-height: 42px; padding: 0 20px;
+    font: inherit; font-size: 12.5px; font-weight: 700; color: #fff; cursor: pointer; border-radius: 999px;
+    background: color-mix(in srgb, var(--kg) 20%, transparent); border: 0; box-shadow: inset 0 0 0 1px var(--kg);
+    transition: background .25s, transform .4s var(--kg-spring), box-shadow .3s;
+}
+.vid-btn:hover, .vid-btn:focus-visible { outline: 0; transform: scale(1.06); background: color-mix(in srgb, var(--kg) 40%, transparent); box-shadow: inset 0 0 0 1px var(--kg), 0 0 26px -4px var(--kg); }
+.vid-btn:active { transform: scale(.96); }
+.vid-btn i { font-size: 11px; color: var(--kg); transition: color .25s; }
+.vid-btn:hover i { color: #fff; }
+
+/* ---------- Mini ventana de video ---------- */
+.vid-dialog {
+    width: min(600px, calc(100vw - 24px)); height: fit-content; overflow: hidden; border-radius: 24px;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--kg) 55%, transparent), 0 40px 90px -10px rgba(0, 0, 0, .9),
+                0 0 100px -26px var(--kg);
+}
+.vid-dialog[open] { animation-name: vidIn; animation-duration: .6s; animation-timing-function: var(--kg-spring); }
+@keyframes vidIn { from { opacity: 0; transform: scale(.9) translateY(14px); } }
+.vid-head { padding: 18px 64px 12px 22px; }
+.vid-head h3 { font: 800 18px / 1.25 var(--kg-serif); }
+.vid-head span { display: block; margin-top: 3px; font-size: 11px; font-weight: 700; color: var(--kg); }
+.vid-wrap { position: relative; background: #000; }
+.vid-wrap video { display: block; width: 100%; max-height: 68vh; max-height: 68dvh; background: #000; }
+.vid-msg { position: absolute; inset: 0; display: none; place-items: center; padding: 18px; text-align: center; font-size: 13px; color: #dfe5f0; background: rgba(0, 0, 0, .78); }
+.vid-wrap.error .vid-msg { display: grid; }
+.vid-desc { padding: 14px 22px 20px; font-size: 12.8px; line-height: 1.7; color: #b6bfd0; }
+
+/* =====================================================================
+   ÁRBOL DE NATURALEZAS  (la captura se disuelve en la página)
+===================================================================== */
+.tree-fig.lg {
+    margin: 0; padding: 0; overflow: visible; border: 0; border-radius: 0; background: none; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.tree-fig.lg::before { display: none; }
+.tree-fig img {
+    display: block; width: 100%; height: auto; border-radius: 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent);
+            mask-composite: intersect;
+}
+.tree-fig figcaption { padding: 14px 6px 0; text-align: center; font-size: 12px; line-height: 1.7; color: #8d98aa; }
+@supports (animation-timeline: view()) {
+    .tree-fig img { animation: treeIn linear both; animation-timeline: view(); animation-range: entry 5% cover 38%; }
+    @keyframes treeIn { from { opacity: 0; scale: .94; filter: blur(6px); } }
+}
+
+/* =====================================================================
+   MÓVIL
+===================================================================== */
+@media (max-width: 720px) {
+    .kg-card { --hero: 268px; }
+    .stage { --cy: 118px; }
+    .kg-card.hereditary { flex-direction: column; min-height: 0; --hero: 268px; }
+    .kg-card.hereditary .stage { inset: 0 0 auto 0; height: var(--hero); --cy: 118px; --pad: 18px; --es: 56px; --bx: 50%; --rx: 50%;
+        -webkit-mask-image: linear-gradient(#000 0, #000 50%, transparent 100%); mask-image: linear-gradient(#000 0, #000 50%, transparent 100%); }
+    .kg-card.hereditary .stage::before { inset: 0; --fade: linear-gradient(#000, #000); }
+    .kg-card.hereditary .stage .bone { --hs: 1; }
+    .kg-card.hereditary .kg-body { flex: 1; margin-top: calc(var(--hero) - 46px); padding: 0 24px 24px; }
+
+    .kg-dialog .stage { --hero: 264px; --cy: 132px; --pad: 20px; --es: 56px; }
+    .kg-dialog .stage::before { inset: 0; --fade: linear-gradient(#000, #000); }
+    .kg-dialog .stage.bones { --bx: 50%; --rx: 50%; }
+    .kg-dialog .stage.bones .bone { --hs: 1; }
+    .kg-dialog-body { margin-top: -60px; padding: 0 20px 26px; }
+
+    .kg-tech { flex-direction: column; align-items: stretch; }
+    .vid-btn { justify-content: center; min-height: 46px; }
+    .adn-step + .adn-step { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .08); }
+    .adn-step { padding: 26px 22px; }
+    .kg-filters { border-radius: 24px; }
+}
+
+/* =====================================================================
+   MOVIMIENTO REDUCIDO  ·  se muestra directamente el resultado final
+===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .nx-banner::after, .nx-banner::before, .nx-banner h1, .nx-banner h1 span, .nx-banner p, .nx-back, .kg-filters,
+    .kg-card, .tree-fig img, .kg-dialog[open], .vid-dialog[open], .kg-dialog[open]::backdrop,
+    .kg-dialog[open] .kg-dialog-body > *, .kg-dialog[open] .kg-tech { animation: none; }
+
+    .stage .orb, .stage .ring, .stage .flash, .stage .spark, .stage .tag { display: none; }
+    .stage::before { animation: none; opacity: 1; --rev: 160%; scale: var(--flip, 1) 1; }
+    .stage::after { animation: none; opacity: var(--tint, .26); }
+    .stage .result, .stage.bones .result {
+        animation: none; opacity: 1; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)));
+    }
+    .stage.bones .bone { animation: none; transform: rotate(var(--a)) scaleY(1); }
+    .kg-card, .kg-card .stage, .kg-chip, .kg-chip .k, .kg-close, .vid-btn, .kg-tech, .adn-step .n { transition: none; }
+    .kg-card:hover .stage { transform: none; }
+}

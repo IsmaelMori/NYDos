@@ -1,0 +1,327 @@
+/* ==========================================================================
+   NYDo WIKI - HOJA DE ESTILOS PARA DOJUTSUS (GLASSMORPHISM STYLE)
+   ========================================================================== */
+
+:root {
+    --bg-dark: #07080d;
+    
+    /* Variables de Glassmorphism */
+    --glass-bg: rgba(18, 22, 36, 0.55);
+    --glass-bg-hover: rgba(28, 34, 56, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --glass-blur: blur(14px);
+    
+    /* Colores Temáticos Oculares */
+    --red-uchiha: #ff3b4b;
+    --red-glow: rgba(255, 59, 75, 0.4);
+    --blue-hyuga: #00d2ff;
+    --blue-glow: rgba(0, 210, 255, 0.4);
+    --purple-rinnegan: #b15eff;
+    --purple-glow: rgba(177, 94, 255, 0.45);
+    --gold-accent: #ffc107;
+
+    --font-heading: 'Cinzel', serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(177, 94, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 59, 75, 0.08) 0%, transparent 40%);
+    background-attachment: fixed;
+    color: #e2e8f0;
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0;
+}
+
+/* TOPBAR CON EFECTO GLASS */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(9, 10, 15, 0.65) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.brand-symbol {
+    color: var(--red-uchiha);
+    font-size: 1.8rem;
+}
+
+/* HERO BANNER CON VIDEO */
+.dojutsu-banner-custom {
+    position: relative;
+    min-height: clamp(360px, 52vh, 480px);
+    padding: 110px 30px 80px;
+    display: flex;
+    align-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    background: #07080d center / cover no-repeat;
+    border-bottom: 1px solid var(--glass-border);
+    contain: paint;
+}
+
+.dojutsu-banner-custom .banner-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: -3;
+    filter: brightness(0.7) saturate(1.1);
+    transform: scale(1.04);
+    animation: bannerZoom 22s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.dojutsu-banner-custom .banner-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+        linear-gradient(0deg, var(--bg-dark) 0%, transparent 28%),
+        linear-gradient(90deg, rgba(7,8,13,.9) 0%, rgba(7,8,13,.6) 48%, rgba(7,8,13,.22) 100%);
+}
+
+/* resplandor rojo que "late" como un sharingan */
+.dojutsu-banner-custom .banner-glow {
+    position: absolute;
+    right: -12%;
+    top: 50%;
+    width: min(560px, 80vw);
+    aspect-ratio: 1;
+    margin-top: calc(min(560px, 80vw) / -2);
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,59,75,.28) 0%, rgba(177,94,255,.12) 40%, transparent 68%);
+    animation: glowPulse 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.banner-content { position: relative; max-width: 640px; }
+
+.banner-content > * { opacity: 0; animation: bannerIn .8s cubic-bezier(.2,.7,.2,1) forwards; }
+.banner-content > :nth-child(1) { animation-delay: .1s; }
+.banner-content > :nth-child(2) { animation-delay: .25s; }
+.banner-content > :nth-child(3) { animation-delay: .4s; }
+.banner-content > :nth-child(4) { animation-delay: .55s; }
+
+.dojutsu-banner-custom h1 span {
+    background: linear-gradient(100deg, var(--red-uchiha), var(--purple-rinnegan), var(--blue-hyuga), var(--red-uchiha));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textFlow 8s linear infinite;
+}
+
+.jutsu-main-btn { position: relative; overflow: hidden; }
+.jutsu-main-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.35) 50%, transparent 65%);
+    transform: translateX(-120%);
+    animation: btnSweep 4.5s ease-in-out 1.5s infinite;
+}
+
+.jutsu-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+    margin-bottom: 1.5rem;
+}
+.jutsu-eyebrow i { animation: eyeBlink 6s ease-in-out infinite; transform-origin: center; }
+
+@keyframes bannerZoom { to { transform: scale(1.12); } }
+@keyframes glowPulse { 0%,100% { opacity: .55; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.06); } }
+@keyframes bannerIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes textFlow { to { background-position: 300% 0; } }
+@keyframes btnSweep { 0%,60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+@keyframes eyeBlink { 0%,92%,100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+
+/* ENTRADA AL HACER SCROLL (la activa dojutsus-banner.js) */
+.rv-pre { opacity: 0; }
+.rv-in { animation: rvUp .7s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes rvUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+
+/* NAVEGACIÓN CATEGORÍAS EN GLASS */
+.category-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0 3rem;
+}
+
+.category-nav a {
+    padding: 0.75rem 1.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: transform .3s ease, background .3s ease, border-color .3s ease, box-shadow .3s ease, color .3s ease;
+    box-shadow: var(--glass-shadow);
+}
+
+.category-nav a:hover,
+.category-nav a.activo {
+    background: var(--glass-bg-hover);
+    border-color: var(--purple-rinnegan);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--purple-glow);
+}
+
+/* PANELES GENERALES GLASS */
+.jutsu-panel {
+    max-width: 1100px;
+    margin: 0 auto 3rem;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: var(--glass-shadow);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.jutsu-panel:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* PANEL RINNEGAN ESPECÍFICO */
+.rinnegan-panel {
+    border: 1px solid rgba(177, 94, 255, 0.3);
+    background: radial-gradient(circle at top right, rgba(177, 94, 255, 0.12), transparent 60%), var(--glass-bg);
+}
+
+.rinnegan-panel:hover {
+    border-color: var(--purple-rinnegan);
+    box-shadow: 0 0 30px var(--purple-glow);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.panel-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+}
+
+.silver-icon { color: var(--blue-hyuga); box-shadow: 0 0 15px var(--blue-glow); }
+.red-icon { color: var(--red-uchiha); box-shadow: 0 0 15px var(--red-glow); }
+.purple-icon { color: var(--purple-rinnegan); box-shadow: 0 0 15px var(--purple-glow); }
+
+/* TARJETAS GLASS PARA HABILIDADES */
+.feature-grid, .steps-grid, .rinnegan-skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.info-card, .rinnegan-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    transition: all 0.3s ease;
+}
+
+.info-card:hover, .rinnegan-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-5px);
+    border-color: var(--purple-rinnegan);
+    box-shadow: 0 8px 25px rgba(177, 94, 255, 0.2);
+}
+
+.rinnegan-card h3 {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.rinnegan-card h3 i {
+    color: var(--purple-rinnegan);
+}
+
+.rinnegan-card p {
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .dojutsu-banner-custom { min-height: 340px; padding: 84px 18px 48px; }
+    .dojutsu-banner-custom .banner-overlay {
+        background: linear-gradient(0deg, var(--bg-dark) 0%, transparent 30%), linear-gradient(180deg, rgba(7,8,13,.55), rgba(7,8,13,.82));
+    }
+    .dojutsu-banner-custom .banner-video { animation: none; transform: none; }
+    .dojutsu-banner-custom .banner-glow { right: -40%; opacity: .7; animation-duration: 7s; }
+    .banner-content { max-width: 100%; }
+    .jutsu-eyebrow { font-size: .72rem; letter-spacing: 1.2px; margin-bottom: 1rem; }
+    .jutsu-panel { padding: 1.5rem; margin-bottom: 1.6rem; border-radius: 20px; }
+    .category-nav { flex-wrap: wrap; justify-content: center; }
+}
+@media (hover: none) {
+    .jutsu-main-btn::after { animation: none; }
+    .category-nav a:hover, .info-card:hover, .rinnegan-card:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .banner-content > * { opacity: 1; animation: none; }
+    .rv-pre { opacity: 1; }
+}

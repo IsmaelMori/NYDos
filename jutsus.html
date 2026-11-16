@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jutsus | NYDo Wiki</title>
+
+    <!-- CSS: base compartida (menú lateral) + diseño propio de esta página -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="busqueda.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="mobile-nav.css">
+    <link rel="stylesheet" href="nocturno.css">
+</head>
+
+<body class="nt-body">
+
+<!-- CIELO NOCTURNO (fondo animado) -->
+<canvas id="ntSky" aria-hidden="true"></canvas>
+<div class="nt-aurora" aria-hidden="true"></div>
+
+<!-- ==========================================
+     HEADER GLOBAL - NYDo WIKI
+========================================== -->
+<header class="nydo-header">
+    <div class="topbar nydo-topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú" aria-expanded="false">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <a href="index.html#inicio" class="brand">
+            <span class="brand-symbol">木</span>
+            <span class="brand-name">NYDo</span>
+        </a>
+
+        <div class="brand-description">
+            <strong>WIKI NO OFICIAL</strong>
+            <span>Mod de Naruto para Minecraft</span>
+        </div>
+
+        <!-- BUSCADOR GLOBAL -->
+        <div class="wiki-search-wrap" id="wikiSearch">
+            <div class="wiki-search-box">
+                <i class="fa-solid fa-magnifying-glass wiki-search-icon"></i>
+                <input type="search" id="wikiSearchInput" placeholder="Buscar..." autocomplete="off"
+                       aria-label="Buscar en toda la wiki" aria-controls="wikiSearchResults" aria-expanded="false">
+                <button type="button" id="wikiSearchClear" aria-label="Limpiar búsqueda" style="display:none;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="wikiSearchResults" class="wiki-search-results" role="region" aria-live="polite"></div>
+        </div>
+    </div>
+</header>
+
+<!-- FONDO DEL MENÚ MÓVIL (OVERLAY) -->
+<div class="page-overlay" id="pageOverlay"></div>
+
+<!-- MENÚ LATERAL -->
+<aside class="sidebar" id="sidebar" data-include="sidebar.html"></aside>
+
+<main class="nt-main">
+
+    <!-- =========================
+         HERO · LUNA DEL TSUKUYOMI
+    ========================= -->
+    <section class="nt-hero" id="inicio">
+        <div class="nt-hero-sky" aria-hidden="true"></div>
+        <video class="nt-hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+            <source src="vid/banner.mp4" type="video/mp4" onerror="this.parentNode.remove()">
+        </video>
+        <div class="nt-hero-shade" aria-hidden="true"></div>
+        <span class="nt-cloud c1" aria-hidden="true"></span>
+        <span class="nt-cloud c2" aria-hidden="true"></span>
+        <span class="nt-cloud c3" aria-hidden="true"></span>
+
+        <div class="nt-moon-wrap" aria-hidden="true">
+            <div class="nt-moon"></div>
+            <span class="nt-ripple"></span>
+            <span class="nt-ripple"></span>
+            <span class="nt-ripple"></span>
+            <span class="nt-ripple"></span>
+        </div>
+
+        <svg class="nt-hills" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 150V92c80-38 150-52 230-30 70 20 110 52 190 40 90-14 140-70 250-66 100 4 150 50 250 48 110-2 170-60 290-58 90 2 150 30 230 50v74z" fill="#0a0716"/>
+            <path d="M0 150v-34c110-24 190-4 290 8 100 12 170-16 270-18 120-2 180 34 300 30 110-4 180-38 290-36 110 2 190 26 290 34v16z" fill="#04050d"/>
+        </svg>
+
+        <div class="nt-hero-inner">
+            <span class="nt-tag"><i class="fa-solid fa-moon"></i> ENCICLOPEDIA SHINOBI</span>
+            <h1>ARTES <span>SHINOBI</span></h1>
+            <p>
+                Bajo la luna roja se esconden las artes ninja. Descubre los elementos,
+                las técnicas de combate y los secretos del chakra en el mundo de Naruto.
+            </p>
+            <a href="guia.html" class="nt-btn">
+                <i class="fa-solid fa-compass"></i>
+                Explorar guía para principiantes
+            </a>
+        </div>
+        <span class="nt-scroll" aria-hidden="true"></span>
+    </section>
+
+    <!-- =========================
+         CATEGORÍAS
+    ========================= -->
+    <div class="nt-wrap" id="categorias">
+
+        <div class="nt-intro nt-rv">
+            <small>CLASIFICACIÓN NINJA</small>
+            <h2>Artes y técnicas</h2>
+            <p>Selecciona una categoría para conocer sus características.</p>
+        </div>
+
+        <nav class="nt-chips" aria-label="Categorías">
+            <a href="#ninjutsu">Ninjutsu</a>
+            <a href="#taijutsu">Taijutsu</a>
+            <a href="#genjutsu">Genjutsu</a>
+            <a href="#senjutsu">Senjutsu</a>
+            <a href="#kenjutsu">Kenjutsu</a>
+            <a href="#fuinjutsu">Fūinjutsu</a>
+        </nav>
+
+        <!-- ============ NINJUTSU ============ -->
+        <article class="nt-sec" id="ninjutsu" data-t="nin">
+            <span class="nt-secfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <div class="nt-rail nt-rv">
+                <span class="nt-num">01</span>
+                <span class="nt-kanji" translate="no">忍</span>
+                <span class="nt-eyebrow">ARTE NINJA</span>
+            </div>
+
+            <div class="nt-body-col">
+                <div class="nt-rv">
+                    <h2>Ninjutsu</h2>
+                    <p class="nt-sub">Manipulación del chakra para realizar técnicas.</p>
+                    <p class="nt-text">
+                        El ninjutsu comprende técnicas que utilizan el chakra
+                        para producir diferentes efectos, como ataques elementales,
+                        transformaciones, técnicas de apoyo, curación y otras
+                        habilidades especiales.
+                    </p>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Las cinco naturalezas básicas y el Ninjutsu</h3>
+
+                <div class="nt-elements">
+                    <a href="katon.html" class="nt-el nt-fire nt-rv" aria-label="Katon: Elemento Fuego">
+                        <span class="nt-fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                        <span class="nt-el-bg" aria-hidden="true" translate="no">火</span>
+                        <div class="nt-el-sym" translate="no">火</div>
+                        <small>Elemento Fuego</small>
+                        <h3>Katon</h3>
+                        <p>Permite generar y controlar técnicas basadas en el fuego.</p>
+                    </a>
+                    <a href="futon.html" class="nt-el nt-wind nt-rv" aria-label="Fūton: Elemento Viento">
+                        <span class="nt-fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                        <span class="nt-el-bg" aria-hidden="true" translate="no">風</span>
+                        <div class="nt-el-sym" translate="no">風</div>
+                        <small>Elemento Viento</small>
+                        <h3>Fūton</h3>
+                        <p>Utiliza el viento para cortar, impulsar y potenciar ataques.</p>
+                    </a>
+                    <a href="raiton.html" class="nt-el nt-lightning nt-rv" aria-label="Raiton: Elemento Rayo">
+                        <span class="nt-fx" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                        <span class="nt-el-bg" aria-hidden="true" translate="no">雷</span>
+                        <div class="nt-el-sym" translate="no">雷</div>
+                        <small>Elemento Rayo</small>
+                        <h3>Raiton</h3>
+                        <p>Concentra chakra eléctrico en ataques rápidos y penetrantes.</p>
+                    </a>
+                    <a href="doton.html" class="nt-el nt-earth nt-rv" aria-label="Doton: Elemento Tierra">
+                        <span class="nt-fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                        <span class="nt-el-bg" aria-hidden="true" translate="no">土</span>
+                        <div class="nt-el-sym" translate="no">土</div>
+                        <small>Elemento Tierra</small>
+                        <h3>Doton</h3>
+                        <p>Permite manipular la tierra para crear defensas y ataques.</p>
+                    </a>
+                    <a href="suiton.html" class="nt-el nt-water nt-rv" aria-label="Suiton: Elemento Agua">
+                        <span class="nt-fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                        <span class="nt-el-bg" aria-hidden="true" translate="no">水</span>
+                        <div class="nt-el-sym" translate="no">水</div>
+                        <small>Elemento Agua</small>
+                        <h3>Suiton</h3>
+                        <p>Permite crear y controlar agua en diferentes formas.</p>
+                    </a>
+                    <a href="ninjutsu.html" class="nt-el nt-ninja nt-rv" aria-label="Ninjutsu: No es un elemento">
+                        <span class="nt-fx" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="nt-el-bg" aria-hidden="true" translate="no">忍</span>
+                        <div class="nt-el-sym"><img src="img/ninjutsu.png" alt="" width="34" height="34" loading="lazy" decoding="async"></div>
+                        <small>No es un elemento</small>
+                        <h3>Ninjutsu</h3>
+                        <p>Rasengan, clones de sombra, Dios del Trueno Volador y jutsu de sustitución.</p>
+                    </a>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Ninjutsu médico</h3>
+
+                <div class="nt-card nt-med nt-rv">
+                    <div class="nt-ic"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <div>
+                        <h3>Iryō Ninjutsu</h3>
+                        <p>
+                            Es la rama del ninjutsu dedicada a la medicina.
+                            Utiliza un control preciso del chakra para tratar
+                            heridas, curar lesiones y apoyar a otros ninjas.
+                            Su uso requiere conocimientos médicos y gran precisión.
+                        </p>
+                        <span class="nt-tagline">Curación y apoyo</span>
+                    </div>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Otras transformaciones elementales</h3>
+
+                <p class="nt-sub nt-rv" style="max-width:720px;line-height:1.8;">
+                    Además de las cinco naturalezas básicas, existen
+                    transformaciones avanzadas que combinan naturalezas
+                    o presentan propiedades especiales.
+                </p>
+
+                <!-- ÚNICO BOTÓN HACIA KEKKEI GENKAI -->
+                <a href="kekkei-genkai.html" class="nt-portal nt-p-kg nt-rv" aria-label="Ver todos los Kekkei Genkai y sus combinaciones">
+                    <span class="nt-big" aria-hidden="true" translate="no">血</span>
+                    <div class="nt-orb" aria-hidden="true"><i class="fa-solid fa-dna"></i></div>
+                    <div>
+                        <small>Poderes de sangre</small>
+                        <h3>Kekkei Genkai</h3>
+                        <p>
+                            Madera, hielo, lava, tormenta, imán, explosivo y más.
+                            Descubre qué naturalezas combinar para conseguir cada uno,
+                            cómo inyectarte ADN y sus técnicas en video.
+                        </p>
+                        <span class="nt-kg-glyphs" aria-hidden="true">
+                            <span style="--g:#5fcf7a" translate="no">木</span>
+                            <span style="--g:#8ad4ff" translate="no">氷</span>
+                            <span style="--g:#ff7a38" translate="no">熔</span>
+                            <span style="--g:#b79cff" translate="no">嵐</span>
+                            <span style="--g:#e7b66d" translate="no">磁</span>
+                            <span style="--g:#ffb347" translate="no">爆</span>
+                            <span style="--g:#d6c7ff" translate="no">塵</span>
+                            <span style="--g:#f1ece0" translate="no">骨</span>
+                        </span>
+                    </div>
+                    <span class="nt-go">Explorar <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <p class="nt-note nt-rv">
+                    Nota: algunas transformaciones avanzadas son kekkei genkai
+                    o kekkei tōta; no todos los ninjas pueden aprenderlas.
+                </p>
+            </div>
+        </article>
+
+        <!-- ============ TAIJUTSU ============ -->
+        <article class="nt-sec" id="taijutsu" data-t="tai">
+            <span class="nt-secfx" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div class="nt-rail nt-rv">
+                <span class="nt-num">02</span>
+                <span class="nt-kanji" translate="no">拳</span>
+                <span class="nt-eyebrow">COMBATE FÍSICO</span>
+            </div>
+
+            <div class="nt-body-col">
+                <div class="nt-rv">
+                    <h2>Taijutsu</h2>
+                    <p class="nt-sub">El arte de combatir con el cuerpo.</p>
+                    <p class="nt-text">
+                        El taijutsu consiste en luchar utilizando golpes, patadas,
+                        bloqueos, movimientos y técnicas corporales. Se enfoca en
+                        la fuerza, la velocidad, la resistencia y el dominio físico.
+                        Aunque algunas técnicas pueden combinarse con chakra,
+                        no dependen necesariamente de complejos sellos manuales.
+                    </p>
+                </div>
+
+                <div class="nt-grid3">
+                    <div class="nt-card nt-rv">
+                        <i class="ic fa-solid fa-bolt"></i>
+                        <h3>Velocidad</h3>
+                        <p>Movimientos rápidos para atacar y esquivar.</p>
+                    </div>
+                    <div class="nt-card nt-rv">
+                        <i class="ic fa-solid fa-shield-halved"></i>
+                        <h3>Defensa</h3>
+                        <p>Bloqueos, evasiones y control de la distancia.</p>
+                    </div>
+                    <div class="nt-card nt-rv">
+                        <i class="ic fa-solid fa-dumbbell"></i>
+                        <h3>Fuerza física</h3>
+                        <p>Potencia, resistencia y control corporal.</p>
+                    </div>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Técnicas especiales</h3>
+
+                <a href="ocho-puertas.html" class="nt-portal nt-p-gates nt-rv" aria-label="Las Ocho Puertas: próximamente">
+                    <span class="nt-big" aria-hidden="true" translate="no">門</span>
+                    <div class="nt-orb" aria-hidden="true" translate="no">門</div>
+                    <div>
+                        <small>Taijutsu · Límite del cuerpo</small>
+                        <h3>Las Ocho Puertas</h3>
+                        <p>
+                            Ocho puertas internas que limitan el chakra del cuerpo.
+                            Abrirlas multiplica la fuerza y la velocidad, pero con
+                            un riesgo enorme para quien las usa.
+                        </p>
+                        <div class="nt-pills">
+                            <span class="soon"><i class="fa-solid fa-hourglass-half"></i>Próximamente</span>
+                        </div>
+                    </div>
+                    <span class="nt-go">Ver página <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </article>
+
+        <!-- ============ GENJUTSU ============ -->
+        <article class="nt-sec" id="genjutsu" data-t="gen">
+            <span class="nt-secfx" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div class="nt-rail nt-rv">
+                <span class="nt-num">03</span>
+                <span class="nt-kanji" translate="no">幻</span>
+                <span class="nt-eyebrow">PERCEPCIÓN</span>
+            </div>
+
+            <div class="nt-body-col">
+                <div class="nt-rv">
+                    <h2>Genjutsu</h2>
+                    <p class="nt-sub">El arte de las ilusiones.</p>
+                </div>
+
+                <div class="nt-quote nt-rv" style="margin-top:26px;">
+                    <b>¿QUÉ ES EL GENJUTSU?</b>
+                    El genjutsu es una técnica ilusoria que altera la
+                    percepción de los sentidos del objetivo mediante
+                    la manipulación de su chakra. Puede hacer que una
+                    persona vea, escuche o sienta cosas que no están
+                    ocurriendo realmente, afectando su interpretación
+                    de la realidad.
+                </div>
+            </div>
+        </article>
+
+        <!-- ============ SENJUTSU ============ -->
+        <article class="nt-sec" id="senjutsu" data-t="sen">
+            <span class="nt-secfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <div class="nt-rail nt-rv">
+                <span class="nt-num">04</span>
+                <span class="nt-kanji" translate="no">仙</span>
+                <span class="nt-eyebrow">ENERGÍA NATURAL</span>
+            </div>
+
+            <div class="nt-body-col">
+                <div class="nt-rv">
+                    <h2>Senjutsu</h2>
+                    <p class="nt-sub">El poder de la naturaleza.</p>
+                    <p class="nt-text">
+                        El senjutsu es el arte de aprovechar la energía natural
+                        del entorno y combinarla con la energía física y espiritual
+                        para producir chakra senjutsu. Su dominio permite entrar
+                        en un Modo Sabio, aumentando las capacidades del usuario.
+                        Sin embargo, absorber demasiada energía natural sin
+                        control puede tener consecuencias peligrosas.
+                    </p>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Modos sabios conocidos</h3>
+
+                <a href="modo-sabio.html" class="nt-portal nt-p-sage nt-rv" aria-label="Modo Sabio de los Sapos: ver guía y habilidades" style="margin-top:0;">
+                    <span class="nt-big" aria-hidden="true" translate="no">仙</span>
+                    <div class="nt-orb" aria-hidden="true" translate="no">仙</div>
+                    <div>
+                        <small>Senjutsu · Monte Myōboku</small>
+                        <h3>Modo Sabio de los Sapos</h3>
+                        <p>
+                            Se aprende mediante el entrenamiento relacionado
+                            con los sapos del Monte Myōboku. Permite utilizar
+                            energía natural y mejorar las capacidades de combate.
+                        </p>
+                        <div class="nt-pills">
+                            <span><i class="fa-solid fa-route"></i>Cómo obtenerlo</span>
+                            <span><i class="fa-solid fa-leaf"></i>Habilidades</span>
+                        </div>
+                    </div>
+                    <span class="nt-go">Ver guía <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <div class="nt-grid2" style="margin-top:16px;">
+                    <div class="nt-sage nt-rv">
+                        <span class="sym" translate="no">蛇</span>
+                        <h3>Modo Sabio de las Serpientes</h3>
+                        <p>
+                            Está relacionado con la energía natural y las
+                            serpientes de la Cueva Ryūchi. Kabuto es uno de
+                            sus usuarios más conocidos.
+                        </p>
+                    </div>
+                    <div class="nt-sage nt-rv">
+                        <span class="sym" translate="no">六</span>
+                        <h3>Modo Sabio de los Seis Caminos</h3>
+                        <p>
+                            Es un poder especial asociado a Hagoromo Ōtsutsuki
+                            y a las capacidades extraordinarias que recibió Naruto.
+                        </p>
+                    </div>
+                    <div class="nt-sage nt-rv" style="grid-column:1/-1;">
+                        <span class="sym" translate="no">森</span>
+                        <h3>Otras formas de senjutsu</h3>
+                        <p>
+                            Existen usuarios y formas particulares de utilizar
+                            energía natural. No todos los modos especiales
+                            son equivalentes ni funcionan de la misma manera.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- ============ KENJUTSU ============ -->
+        <article class="nt-sec" id="kenjutsu" data-t="ken">
+            <span class="nt-secfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <div class="nt-rail nt-rv">
+                <span class="nt-num">05</span>
+                <span class="nt-kanji" translate="no">剣</span>
+                <span class="nt-eyebrow">ARTE DE LA ESPADA</span>
+            </div>
+
+            <div class="nt-body-col">
+                <div class="nt-rv">
+                    <h2>Kenjutsu</h2>
+                    <p class="nt-sub">Combate con espadas y armas de filo.</p>
+                    <p class="nt-text">
+                        El kenjutsu es el arte de luchar utilizando espadas.
+                        Comprende técnicas de corte, estocadas, bloqueos,
+                        desplazamientos y estrategias para enfrentarse a un
+                        adversario armado. Algunos shinobi también combinan
+                        el manejo de la espada con chakra para aumentar
+                        el alcance o las propiedades de sus ataques.
+                    </p>
+                </div>
+
+                <div class="nt-quote nt-rv">
+                    <b>OBJETIVO</b>
+                    Dominar el arma, controlar la distancia, aprovechar
+                    las aperturas del rival y combinar precisión,
+                    velocidad y defensa durante el combate.
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Armas del mod</h3>
+
+                <a href="armas.html" class="nt-portal nt-p-blade nt-rv" aria-label="Armas ninja: ver armario de armas, daño y crafteos" style="margin-top:0;">
+                    <span class="nt-big" aria-hidden="true" translate="no">刃</span>
+                    <div class="nt-orb" aria-hidden="true" translate="no">刃</div>
+                    <div>
+                        <small>Kenjutsu · Armas ninja</small>
+                        <h3>Armero ninja</h3>
+                        <p>
+                            Kunai, shuriken, espadas legendarias y armas especiales
+                            del mod, con su descripción, daño y receta de crafteo.
+                        </p>
+                        <div class="nt-pills">
+                            <span><i class="fa-solid fa-khanda"></i>Daño</span>
+                            <span><i class="fa-solid fa-hammer"></i>Crafteo</span>
+                        </div>
+                    </div>
+                    <span class="nt-go">Ver armas <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </article>
+
+        <!-- ============ FŪINJUTSU ============ -->
+        <article class="nt-sec" id="fuinjutsu" data-t="fui">
+            <span class="nt-seal" aria-hidden="true"></span>
+            <span class="nt-secfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <div class="nt-rail nt-rv">
+                <span class="nt-num">06</span>
+                <span class="nt-kanji" translate="no">封</span>
+                <span class="nt-eyebrow">TÉCNICAS DE SELLADO</span>
+            </div>
+
+            <div class="nt-body-col">
+                <div class="nt-rv">
+                    <h2>Fūinjutsu</h2>
+                    <p class="nt-sub">Sellar, contener y restringir poderes.</p>
+                    <p class="nt-text">
+                        El fūinjutsu es el conjunto de técnicas que permiten
+                        sellar objetos, chakra, seres o determinadas habilidades.
+                        Sus efectos dependen del sello empleado: puede servir
+                        para contener algo, limitar el movimiento de un objetivo
+                        o mantener una entidad encerrada.
+                    </p>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Técnicas y habilidades destacadas</h3>
+
+                <div class="nt-seals">
+                    <div class="nt-card nt-seal-card nt-rv">
+                        <div class="nt-ic"><i class="fa-solid fa-skull"></i></div>
+                        <div>
+                            <span class="nt-tagline" style="margin:0 0 10px;">Sellado prohibido</span>
+                            <h3>Shiki Fūjin</h3>
+                            <p>
+                                El Sello Consumidor del Demonio de la Muerte
+                                invoca al Shinigami para sellar el alma del
+                                objetivo. Es una técnica peligrosa que también
+                                implica un alto precio para quien la utiliza.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="nt-card nt-seal-card nt-rv">
+                        <div class="nt-ic"><i class="fa-solid fa-lock"></i></div>
+                        <div>
+                            <span class="nt-tagline" style="margin:0 0 10px;">Contención</span>
+                            <h3>Sellos de restricción</h3>
+                            <p>
+                                Se utilizan para contener chakra, restringir
+                                capacidades o mantener sellados determinados
+                                objetos y seres, según las propiedades de
+                                cada técnica.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="nt-h3 nt-rv">Técnica espacio-temporal</h3>
+
+                <a href="dios-volador.html" class="nt-portal nt-p-hira nt-rv" aria-label="Dios del Trueno Volador: ver guía y habilidades" style="margin-top:0;">
+                    <span class="nt-big" aria-hidden="true" translate="no">飛</span>
+                    <div class="nt-orb" aria-hidden="true" translate="no">雷</div>
+                    <div>
+                        <small>Hiraishin no Jutsu · Minato Namikaze</small>
+                        <h3>Dios del Trueno Volador</h3>
+                        <p>
+                            Técnica de desplazamiento espacio-temporal que permite
+                            trasladarse al instante a una ubicación marcada. Consigue
+                            el kunai y equípalo en Preparaciones para obtener 3 habilidades.
+                        </p>
+                        <div class="nt-pills">
+                            <span><i class="fa-solid fa-route"></i>Cómo obtenerlo</span>
+                            <span><i class="fa-solid fa-bolt"></i>3 habilidades</span>
+                        </div>
+                    </div>
+                    <span class="nt-go">Ver guía <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <h3 class="nt-h3 nt-rv">Sellos malditos</h3>
+
+                <a href="marca-maldicion.html" class="nt-portal nt-p-curse nt-rv" aria-label="Marca de Maldición: próximamente" style="margin-top:0;">
+                    <span class="nt-big" aria-hidden="true" translate="no">呪</span>
+                    <div class="nt-orb" aria-hidden="true" translate="no">呪</div>
+                    <div>
+                        <small>Sello maldito</small>
+                        <h3>Marca de Maldición</h3>
+                        <p>
+                            Un sello que otorga un enorme poder a cambio de un
+                            precio. La guía y sus habilidades llegarán pronto.
+                        </p>
+                        <div class="nt-pills">
+                            <span class="soon"><i class="fa-solid fa-hourglass-half"></i>Próximamente</span>
+                        </div>
+                    </div>
+                    <span class="nt-go">Ver página <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <p class="nt-note nt-rv">
+                    Nota: el Hiraishin aparece aquí por su relación con
+                    las marcas de sellado, pero su clasificación principal
+                    es ninjutsu espacio-temporal.
+                </p>
+            </div>
+        </article>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="nt-foot">
+        <a href="index.html" class="brand-name">NYDo</a>
+        <p>El conocimiento de las artes shinobi comienza aquí.</p>
+        <a href="#categorias">Volver al inicio ↑</a>
+    </footer>
+
+</main>
+
+<!-- NUBE DE SUGERENCIAS -->
+<div id="guiaNube" style="display:none;">
+    <div id="guiaMensaje">
+        <span id="guiaNumero">BIENVENIDO A NYDo</span>
+        <h3 id="guiaTitulo">¡Hola, shinobi!</h3>
+        <p id="guiaTexto">Explora las artes ninja y descubre las técnicas del mundo de Naruto.</p>
+        <div class="guiaAcciones">
+            <button id="guiaSaltar" type="button">Saltar</button>
+            <button id="guiaSiguiente" type="button">Siguiente ➜</button>
+        </div>
+    </div>
+    <div id="guiaFlecha"></div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="script.js" defer></script>
+<script src="busqueda.js" defer></script>
+<script src="nocturno.js" defer></script>
+<script src="translate.js" defer></script>
+<script src="mobile-nav.js" defer></script>
+</body>
+</html>

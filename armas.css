@@ -1,0 +1,233 @@
+/* ==========================================================
+   ARMAS · Armero ninja
+   Efecto "Liquid Glass". Solo se animan transform y opacity.
+   El color cambia según la categoría del arma (--t1 / --t2).
+========================================================== */
+
+.armas-page { --t1: 79, 179, 255; --t2: 155, 77, 255; --mx: 50%; --my: 0%; }
+.armas-page[data-cat="1"] { --t1: 168, 85, 247; --t2: 255, 59, 110; }
+.armas-page[data-cat="2"] { --t1: 241, 211, 94; --t2: 120, 190, 255; }
+
+/* banner más bajo que el de la portada de jutsus */
+.armas-page .jutsu-banner { min-height: 340px; padding: 95px 30px 60px; }
+
+/* ---------- Zona del armero con fondo líquido ---------- */
+.armas-wrap {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 36px 16px 56px;
+}
+.armas-fx { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.armas-fx::before,
+.armas-fx::after {
+    content: "";
+    position: absolute;
+    width: 56%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    will-change: transform;
+    transition: background 1s ease;
+}
+.armas-fx::before {
+    top: -10%; left: -10%;
+    background: radial-gradient(circle, rgba(var(--t1), .55), transparent 66%);
+    animation: armasBlobA 14s ease-in-out infinite alternate;
+}
+.armas-fx::after {
+    bottom: -14%; right: -8%;
+    background: radial-gradient(circle, rgba(var(--t2), .42), transparent 66%);
+    animation: armasBlobB 17s ease-in-out infinite alternate;
+}
+.armas-inner { max-width: 900px; margin: 0 auto; }
+
+/* ---------- Superficie de cristal (base común) ---------- */
+.glass {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(var(--t1), .14) 0%, rgba(255, 255, 255, .05) 45%, rgba(var(--t2), .09) 100%);
+    -webkit-backdrop-filter: blur(18px) saturate(190%) brightness(1.08);
+    backdrop-filter: blur(18px) saturate(190%) brightness(1.08);
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, .45),
+        0 0 0 1px rgba(255, 255, 255, .10),
+        inset 0 1px 0 rgba(255, 255, 255, .42),
+        inset 0 -1px 0 rgba(255, 255, 255, .06),
+        inset 0 0 28px rgba(var(--t1), .10);
+}
+.glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        radial-gradient(280px circle at var(--mx) var(--my), rgba(255, 255, 255, .22), transparent 60%),
+        linear-gradient(180deg, rgba(255, 255, 255, .14), transparent 34%);
+    opacity: .7;
+}
+.glass > * { position: relative; z-index: 1; }
+
+/* ---------- Categorías ---------- */
+.armas-tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+.armas-tabs button {
+    padding: 8px 18px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: #d6dcea;
+    cursor: pointer;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .07);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 0 0 1px rgba(255, 255, 255, .09);
+    transition: background .25s, box-shadow .25s;
+}
+.armas-tabs button:hover { background: rgba(255, 255, 255, .13); }
+.armas-tabs button[aria-pressed="true"] {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(var(--t1), .8), rgba(var(--t2), .6));
+    box-shadow: 0 6px 18px rgba(var(--t1), .4), inset 0 1px 0 rgba(255, 255, 255, .55);
+}
+
+/* ---------- Escenario ---------- */
+.stage {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) 56px;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 16px 26px;
+}
+.arrow {
+    width: 52px; height: 52px;
+    display: grid; place-items: center;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .09);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .45), 0 0 0 1px rgba(255, 255, 255, .12);
+    transition: transform .25s cubic-bezier(.2, .8, .2, 1), background .25s;
+}
+.arrow:hover { background: rgba(var(--t1), .35); transform: scale(1.08); }
+.arrow:active { transform: scale(.94); }
+.armas-page button:focus-visible { outline: 2px solid rgb(var(--t2)); outline-offset: 3px; }
+
+.view { text-align: center; min-width: 0; }
+.count { color: #9aa6ba; font-size: 12px; margin-bottom: 10px; }
+.orb {
+    width: min(64vw, 260px);
+    aspect-ratio: 1;
+    margin: 0 auto 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 22%, rgba(255, 255, 255, .45), transparent 42%),
+        linear-gradient(145deg, rgba(var(--t1), .45), rgba(var(--t2), .22));
+    box-shadow:
+        0 14px 34px rgba(var(--t1), .35),
+        inset 0 2px 3px rgba(255, 255, 255, .55),
+        inset 0 -10px 22px rgba(0, 0, 0, .28);
+    animation: armasFloat 6s ease-in-out infinite;
+}
+.orb svg { width: 68%; height: 68%; color: #f4f5fa; filter: drop-shadow(0 4px 12px rgba(var(--t1), .8)); }
+.orb img { width: 74%; height: 74%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .55)) drop-shadow(0 0 14px rgba(var(--t1), .6)); }
+.orb.swap svg, .orb.swap img { animation: armasPop .45s cubic-bezier(.2, .8, .2, 1); }
+.view h2 {
+    margin: 0 0 8px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(22px, 5vw, 32px);
+    color: #fff;
+    text-shadow: 0 2px 16px rgba(var(--t1), .55);
+}
+.view p { max-width: 46ch; margin: 0 auto; font-size: 13.5px; line-height: 1.8; color: rgba(236, 240, 250, .78); }
+.dmg {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #cfd6e4;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 0 0 1px rgba(255, 255, 255, .1);
+}
+.dmg.has { color: #fff; background: linear-gradient(135deg, rgba(var(--t1), .8), rgba(var(--t2), .6)); box-shadow: 0 6px 18px rgba(var(--t1), .4), inset 0 1px 0 rgba(255, 255, 255, .55); }
+
+/* ---------- Crafteo ---------- */
+.craft {
+    margin-top: 18px;
+    padding: 22px 18px;
+    display: flex; gap: 26px; align-items: center; justify-content: center; flex-wrap: wrap;
+    min-height: 130px;
+    color: #e6ebf5;
+}
+.craft-title { width: 100%; text-align: center; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: rgb(var(--t2)); margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(3, 78px); gap: 5px; }
+.grid div {
+    height: 78px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3px;
+    text-align: center;
+    font-size: 11px; line-height: 1.2;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), inset 0 0 0 1px rgba(255, 255, 255, .08);
+}
+.grid div.f {
+    color: #fff; font-weight: 700;
+    background: linear-gradient(145deg, rgba(var(--t1), .5), rgba(var(--t2), .3));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 0 0 1px rgba(var(--t1), .45);
+}
+.list { margin: 0; padding: 0; list-style: none; }
+.list li {
+    margin: 5px 0; padding: 9px 16px; font-size: 13px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(var(--t1), .3), rgba(var(--t2), .16));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 0 0 1px rgba(255, 255, 255, .1);
+}
+.res { text-align: center; font-size: 11px; color: #9aa6ba; }
+.res b { display: block; font-size: 26px; color: #fff; font-family: 'Cinzel', serif; }
+.none { color: #8a96aa; font-size: 13px; }
+
+/* ---------- Estante ---------- */
+.shelf { display: flex; gap: 8px; overflow-x: auto; margin-top: 18px; padding: 12px; scrollbar-width: thin; }
+.shelf button {
+    flex: 0 0 62px; height: 62px; padding: 9px;
+    color: #cfd6e4;
+    cursor: pointer;
+    border: 0; border-radius: 16px;
+    background: rgba(255, 255, 255, .06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 0 0 1px rgba(255, 255, 255, .09);
+    transition: transform .25s cubic-bezier(.2, .8, .2, 1), background .25s;
+}
+.shelf button:hover { background: rgba(255, 255, 255, .14); transform: translateY(-3px); }
+.shelf button[aria-current="true"] { color: #fff; background: linear-gradient(145deg, rgba(var(--t1), .6), rgba(var(--t2), .35)); box-shadow: 0 6px 16px rgba(var(--t1), .4), inset 0 1px 0 rgba(255, 255, 255, .5); }
+.shelf svg, .shelf img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---------- Animaciones ---------- */
+@keyframes armasBlobA { to { transform: translate3d(40%, 24%, 0) scale(1.15); } }
+@keyframes armasBlobB { to { transform: translate3d(-40%, -20%, 0) scale(1.2); } }
+@keyframes armasFloat { 50% { transform: translateY(-6px); } }
+@keyframes armasPop { from { transform: scale(.82) rotate(-6deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 560px) {
+    .stage { grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 4px; padding: 22px 8px; }
+    .arrow { width: 40px; height: 40px; font-size: 15px; }
+    .grid { grid-template-columns: repeat(3, 66px); }
+    .grid div { height: 66px; font-size: 10px; }
+    .armas-wrap { padding: 24px 10px 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .armas-fx::before, .armas-fx::after, .orb, .orb.swap svg, .orb.swap img { animation: none !important; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass { background: rgba(20, 24, 36, .85); }
+}
