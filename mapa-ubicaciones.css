@@ -1,0 +1,47 @@
+/* Mapa interactivo con zoom */
+.mp-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.mp-tabs button { padding: 9px 16px; border-radius: 12px; font-size: 12.5px; font-weight: 700; color: #fff; cursor: pointer; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18); }
+.mp-tabs button.on { background: linear-gradient(135deg,#ff263f,#b90c25); border-color: rgba(255,255,255,.4); }
+.mp-wrap { position: relative; border-radius: 26px; overflow: hidden; background: #0b0d14; border: 1px solid rgba(255,255,255,.15); box-shadow: 0 18px 46px rgba(0,0,0,.4); }
+.mp-view { position: relative; width: 100%; max-height: 82vh; overflow: hidden; cursor: grab; touch-action: none; user-select: none; }
+.mp-view.drag { cursor: grabbing; }
+.mp-stage { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
+.mp-stage > img { display: block; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; image-rendering: pixelated; }
+.mp-pin {
+    position: absolute; transform: translate(-50%,-50%) scale(var(--inv,1)); display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 0; background: none; border: 0; color: #fff; cursor: pointer;
+}
+.mp-pin i { width: 16px; height: 16px; border-radius: 50%; background: var(--c,#ff263f); border: 2px solid #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--c,#ff263f) 40%, transparent), 0 2px 8px rgba(0,0,0,.6); transition: transform .15s; }
+.mp-pin span { padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; background: rgba(0,0,0,.72); border: 1px solid rgba(255,255,255,.25); }
+.mp-pin:hover i, .mp-pin:focus-visible i { transform: scale(1.4); }
+.mp-pin:hover, .mp-pin:focus-visible { z-index: 5; }
+.mp-ctrl { position: absolute; top: 12px; right: 12px; z-index: 6; display: flex; flex-direction: column; gap: 6px; }
+.mp-ctrl button { width: 38px; height: 38px; border-radius: 12px; color: #fff; font-size: 15px; cursor: pointer; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.3); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.mp-ctrl button:hover { background: rgba(255,38,63,.7); }
+.mp-hint { margin-top: 10px; font-size: 12px; color: #8d98aa; }
+
+/* Contenido del diálogo de ubicación */
+.mp-cap { margin-top: 10px; padding: 12px 16px; border-radius: 14px; background: rgba(20,22,34,.9); border: 1px solid rgba(255,255,255,.18); font-size: 13px; line-height: 1.5; }
+.mp-cap b { font-size: 15px; }
+.mp-cap a { color: #ff7b8c; font-weight: 700; }
+.mp-empty { display: grid; place-items: center; min-height: 220px; padding: 20px; text-align: center; color: #aeb7c8; border-radius: 14px; background: rgba(20,22,34,.9); border: 1px solid rgba(255,255,255,.18); }
+
+/* Banner de Akatsuki */
+.mp-banner { position: relative; margin-bottom: 18px; overflow: hidden; border-radius: 26px; border: 1px solid rgba(255,255,255,.15); box-shadow: 0 18px 46px rgba(0,0,0,.4); }
+.mp-banner img { display: block; width: 100%; height: clamp(180px, 28vw, 340px); object-fit: cover; object-position: center 30%; }
+.mp-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,9,15,.9), rgba(8,9,15,.1) 60%); }
+.mp-banner div { position: absolute; left: 22px; bottom: 16px; z-index: 1; }
+.mp-banner h3 { font-size: clamp(20px, 3vw, 30px); }
+.mp-banner p { font-size: 12.5px; color: #cfd6e4; }
+
+/* Pines: anclados por el punto y a prueba de estilos globales de <button> */
+.mp-pin { position: absolute !important; display: block !important; width: 18px !important; height: 18px !important; margin: -9px 0 0 -9px !important; padding: 0 !important; min-width: 0 !important; transform: scale(var(--inv,1)) !important; transform-origin: center !important; background: none !important; border: 0 !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; }
+.mp-pin i { display: block; width: 100%; height: 100%; box-sizing: border-box; }
+.mp-pin span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; pointer-events: none; }
+.mp-pin:hover i, .mp-pin:focus-visible i { transform: scale(1.35); }
+
+/* Vista previa al pasar el cursor */
+.mp-tip { position: absolute; z-index: 8; width: 240px; padding: 8px; border-radius: 16px; pointer-events: none; opacity: 0; transition: opacity .15s; background: rgba(14,16,26,.96); border: 1px solid rgba(255,255,255,.28); box-shadow: 0 14px 40px rgba(0,0,0,.6); }
+.mp-tip.on { opacity: 1; }
+.mp-tip img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; background: #000; }
+.mp-tip b { display: block; margin-top: 7px; font-size: 12.5px; text-align: center; }

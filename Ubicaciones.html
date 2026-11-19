@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="busqueda.css">
     <link rel="stylesheet" href="paginas.css">
     <link rel="stylesheet" href="ubicaciones.css">
+    <link rel="stylesheet" href="mapa-ubicaciones.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="mobile-nav.css">
 </head>
@@ -91,6 +92,25 @@
         <p>Lugares y biomas que existen en el mod, y los comandos para llegar hasta ellos.</p>
     </section>
 
+    <section class="nx-section" id="mapa">
+        <h2>Mapa de ubicaciones</h2>
+        <p class="nx-lead">Haz clic en un pin para ver el lugar. Usa la rueda del ratón o los botones para acercar, y arrastra para moverte.</p>
+        <div class="mp-tabs" id="mpTabs">
+            <button type="button" class="on" data-map="aldea">Aldea de la Hoja</button>
+            <button type="button" data-map="mundo">Mapa general</button>
+        </div>
+        <div class="mp-wrap">
+            <div class="mp-view" id="mpView"><div class="mp-stage" id="mpStage"></div></div>
+            <div class="mp-tip" id="mpTip"><img alt=""><b></b></div>
+            <div class="mp-ctrl">
+                <button type="button" id="mpIn" aria-label="Acercar"><i class="fa-solid fa-plus"></i></button>
+                <button type="button" id="mpOut" aria-label="Alejar"><i class="fa-solid fa-minus"></i></button>
+                <button type="button" id="mpReset" aria-label="Reiniciar"><i class="fa-solid fa-expand"></i></button>
+            </div>
+        </div>
+        <p class="mp-hint">En el mapa general está la base de Akatsuki.</p>
+    </section>
+
     <section class="nx-section" id="lugares">
         <h2>Lugares que puedes buscar</h2>
         <p class="nx-lead">Cada lugar tiene un bioma o una generación asociada. Copia el comando y pégalo en el chat del juego.</p>
@@ -108,6 +128,7 @@
     <section class="nx-section" id="akatsuki">
         <h2>Base de Akatsuki</h2>
         <p class="nx-lead">El escondite de Akatsuki no tiene un comando propio para localizarlo. Así se ve su entrada y su base por dentro.</p>
+        <div class="mp-banner"><img src="img/6_caminos_del_dolor.webp" alt="Los Seis Caminos de Pain"><div><h3>Akatsuki</h3><p>Los Seis Caminos de Pain</p></div></div>
         <div class="ak-grid">
             <figure class="ak-media" style="--ub:#ff263f">
                 <button type="button" class="ak-zoom" data-zoom="img" aria-label="Ampliar imagen de la entrada"><img src="img/EntradaAkatsuki.png" alt="Entrada al escondite de Akatsuki" loading="lazy"><span class="ak-zoom-ico"><i class="fa-solid fa-expand"></i></span></button>
@@ -229,6 +250,148 @@
     document.getElementById("akDlgClose").addEventListener("click", cerrar);
     dlg.addEventListener("click", (e) => { if (e.target === dlg || e.target === body) cerrar(); });
     dlg.addEventListener("close", () => { body.innerHTML = ""; });
+})();
+</script>
+<script>
+(() => {
+    const BASES = ["img/", "", "../img/", "Img/", "IMG/"];
+    function setImg(im, name) {
+        let i = 0;
+        im.onerror = () => { i++; if (i < BASES.length) im.src = BASES[i] + name; else { im.removeAttribute("src"); im.alt = "No se encontró " + name; console.warn("Imagen no encontrada:", name); } };
+        im.src = BASES[0] + name;
+    }
+    const C = {h:"#ffd24a", e:"#3fd0ff", t:"#5fcf7a", c:"#ff7b8c", m:"#b58cff"};
+    const MAPS = {
+        aldea: { src: "mapa_cerca.png", w: 1119, h: 981, pins: [
+            {n:"Hokage", t:"Tsunade · Quinta Hokage", img:"Hokage.png", x:50.3, y:14.6, c:C.h},
+            {n:"Hospital", t:"Nao · Instructora médica", img:"hospital.png", x:64.4, y:18.1, c:C.t},
+            {n:"Academia", t:"Iruka · Academia", img:"academia.png", x:36.2, y:21.0, c:C.e},
+            {n:"Correos", t:"Hana · Correos", img:"correos.png", x:45.3, y:31.6, c:C.c},
+            {n:"Coordinación", t:"Ren · Coordinación", img:"Coordinacion.png", x:55.4, y:31.0, c:C.m},
+            {n:"Kakashi", t:"Kakashi", img:"kakashi.png", x:87.6, y:29.1, c:C.m},
+            {n:"Posadera", t:"Yui · Posadera", img:"posadera.png", x:65.9, y:49.3, c:C.h},
+            {n:"Ichiraku", t:"Teuchi · Ichiraku", img:"ichiraku.png", x:44.1, y:57.7, c:C.e},
+            {n:"Armería", t:"Armería", img:null, x:56.5, y:58.6, c:C.m},
+            {n:"Florería", t:"Mei · Florista", img:"florista.png", x:33.7, y:66.4, c:C.e},
+            {n:"Sastrería", t:"Maki · Sastrería", img:"Sastreria.png", x:44.1, y:66.8, c:C.t},
+            {n:"Pergaminos", t:"Daichi · Pergaminos", img:"pergaminos.png", x:56.6, y:68.3, c:C.h},
+            {n:"Panadero", t:"Haru · Panadero", img:"panadero.png", x:67.0, y:68.8, c:C.e},
+            {n:"Jiraiya", t:"Jiraiya", img:"jiraiya.png", x:75.1, y:73.4, c:C.m},
+            {n:"Puerta", t:"Enlace civil de la Hoja", img:"puerta.png", x:50.5, y:96.7, c:C.m}
+        ]},
+        mundo: { src: "Mapa.png", w: 1050, h: 673, pins: [
+            {n:"Akatsuki", t:"Base de Akatsuki", img:"6_caminos_del_dolor.webp", akatsuki:true, x:13.0, y:14.3, c:"#ff263f"},
+            {n:"Aldea de la Hoja", t:"Aldea de la Hoja", go:"aldea", x:54.5, y:67.5, c:C.t}
+        ]}
+    };
+
+    const view = document.getElementById("mpView"), stage = document.getElementById("mpStage");
+    const dlg = document.getElementById("akDlg"), body = document.getElementById("akDlgBody");
+    let s = 1, x = 0, y = 0, cur = "aldea";
+
+    function apply() {
+        const W = view.clientWidth, H = view.clientHeight;
+        x = Math.min(0, Math.max(W * (1 - s), x));
+        y = Math.min(0, Math.max(H * (1 - s), y));
+        stage.style.transform = `translate(${x}px,${y}px) scale(${s})`;
+        stage.style.setProperty("--inv", 1 / s);
+    }
+    function zoomAt(f, cx, cy) {
+        const ns = Math.min(6, Math.max(1, s * f));
+        x = cx - (cx - x) * (ns / s); y = cy - (cy - y) * (ns / s); s = ns; apply();
+    }
+    function center(f) { zoomAt(f, view.clientWidth / 2, view.clientHeight / 2); }
+
+    function abrir(p) {
+        body.innerHTML = "";
+        if (p.go) { cargar(p.go); return; }
+        if (p.img) {
+            const im = document.createElement("img");
+            im.alt = p.t; setImg(im, p.img); body.appendChild(im);
+        } else {
+            body.insertAdjacentHTML("beforeend", '<div class="mp-empty">Imagen próximamente</div>');
+        }
+        const cap = document.createElement("div");
+        cap.className = "mp-cap";
+        cap.innerHTML = "<b></b>" + (p.akatsuki ? '<div><a href="#akatsuki">Ver entrada y base →</a></div>' : "");
+        cap.querySelector("b").textContent = p.t;
+        body.appendChild(cap);
+        const a = cap.querySelector("a");
+        if (a) a.addEventListener("click", () => dlg.close());
+        dlg.showModal();
+    }
+
+    const wrap = document.querySelector(".mp-wrap"), tip = document.getElementById("mpTip");
+    function showTip(p, b) {
+        if (p.go) return;
+        const im = tip.querySelector("img");
+        tip.querySelector("b").textContent = p.t;
+        if (p.img) { im.style.display = ""; setImg(im, p.img); } else im.style.display = "none";
+        tip.classList.add("on");
+        const wr = wrap.getBoundingClientRect(), br = b.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+        let l = br.left + br.width / 2 - wr.left - tw / 2;
+        l = Math.max(8, Math.min(wr.width - tw - 8, l));
+        let t = br.top - wr.top - th - 12;
+        if (t < 8) t = br.bottom - wr.top + 26;
+        tip.style.left = l + "px"; tip.style.top = t + "px";
+    }
+    function hideTip() { tip.classList.remove("on"); }
+
+    function cargar(k) {
+        cur = k; const m = MAPS[k];
+        document.querySelectorAll("#mpTabs button").forEach(b => b.classList.toggle("on", b.dataset.map === k));
+        view.style.aspectRatio = m.w + " / " + m.h;
+        stage.innerHTML = "";
+        const mi = document.createElement("img"); mi.alt = "Mapa"; mi.draggable = false; setImg(mi, m.src); stage.appendChild(mi);
+        m.pins.forEach(p => {
+            const b = document.createElement("button");
+            b.type = "button"; b.className = "mp-pin";
+            b.style.cssText = `left:${p.x}%;top:${p.y}%;--c:${p.c}`;
+            b.innerHTML = "<i></i><span></span>";
+            b.querySelector("span").textContent = p.n;
+            b.addEventListener("click", () => { if (!moved) { hideTip(); abrir(p); } });
+            b.addEventListener("pointerenter", e => { if (e.pointerType !== "touch" && !moved) showTip(p, b); });
+            b.addEventListener("pointerleave", hideTip);
+            b.addEventListener("focus", () => showTip(p, b));
+            b.addEventListener("blur", hideTip);
+            stage.appendChild(b);
+        });
+        s = 1; x = 0; y = 0; apply();
+    }
+
+    /* Arrastre y pellizco */
+    const ptrs = new Map(); let moved = false, st = {x:0, y:0};
+    view.addEventListener("pointerdown", e => { ptrs.set(e.pointerId, e); if (ptrs.size === 1) {
+            if (!moved && Math.hypot(e.clientX - st.x, e.clientY - st.y) > 6) { moved = true; view.classList.add("drag"); hideTip(); }
+            else if (moved && s > 1) { x += e.clientX - prev.clientX; y += e.clientY - prev.clientY; apply(); }
+        } else if (ptrs.size === 2) {
+            const o = [...ptrs.values()].find(q => q.pointerId !== e.pointerId);
+            const d0 = Math.hypot(prev.clientX - o.clientX, prev.clientY - o.clientY);
+            const d1 = Math.hypot(e.clientX - o.clientX, e.clientY - o.clientY);
+            const r = view.getBoundingClientRect();
+            if (d0) zoomAt(d1 / d0, (e.clientX + o.clientX) / 2 - r.left, (e.clientY + o.clientY) / 2 - r.top);
+            moved = true;
+        }
+        ptrs.set(e.pointerId, e);
+    });
+    const fin = e => { ptrs.delete(e.pointerId); view.classList.remove("drag"); setTimeout(() => { if (!ptrs.size) moved = false; }, 0); };
+    window.addEventListener("pointerup", fin); window.addEventListener("pointercancel", fin);
+
+    view.addEventListener("wheel", e => {
+        e.preventDefault();
+        const r = view.getBoundingClientRect();
+        zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top);
+    }, { passive: false });
+    document.getElementById("mpIn").onclick = () => center(1.4);
+    document.getElementById("mpOut").onclick = () => center(1 / 1.4);
+    document.getElementById("mpReset").onclick = () => { s = 1; x = 0; y = 0; apply(); };
+    document.getElementById("mpTabs").addEventListener("click", e => {
+        const b = e.target.closest("button[data-map]"); if (b) cargar(b.dataset.map);
+    });
+    window.addEventListener("resize", apply);
+    const bn = document.querySelector(".mp-banner img");
+    if (bn) setImg(bn, "6_caminos_del_dolor.webp");
+    cargar("aldea");
 })();
 </script>
 <script src="translate.js"></script>
